@@ -22,7 +22,7 @@ const updatePass=(id)=>
   Axios.put("https://secure-v1.herokuapp.com/update",{id:id,password:newPass})
   .then(()=>{
     setList(listAcc.map((val)=>{
-      return val._id==id?{_id:id,account:val.acc,password:newPass}:val;
+      return val._id==id?{_id:id,account:val.account,password:newPass}:val;
     }))
   })
 }
