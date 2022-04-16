@@ -10,7 +10,7 @@ const [pass,setPass]=useState("")
 const [listAcc,setList]=useState([])
 
 const addDetails=()=>{
-  Axios.post("http://localhost:3001/insert",{account:acc,password:pass})
+  Axios.post("https://secure-v1.herokuapp.com/insert",{account:acc,password:pass})
   .then((res)=>{
     setList([...listAcc,{_id:res.data._id,account:acc,password:pass}])
   })
@@ -19,7 +19,7 @@ const addDetails=()=>{
 const updatePass=(id)=>
 {
   const newPass=prompt("Enter the new password : ")
-  Axios.put("http://localhost:3001/update",{id:id,password:newPass})
+  Axios.put("https://secure-v1.herokuapp.com/update",{id:id,password:newPass})
   .then(()=>{
     setList(listAcc.map((val)=>{
       return val._id==id?{_id:id,account:val.acc,password:newPass}:val;
@@ -28,7 +28,7 @@ const updatePass=(id)=>
 }
 
 const deleteAcc =(id)=>{
-  Axios.delete(`http://localhost:3001/delete/${id}`)
+  Axios.delete(`https://secure-v1.herokuapp.com/delete/${id}`)
   .then((res)=>{
     setList(listAcc.filter((val)=>{
       return val._id!=id
@@ -37,7 +37,7 @@ const deleteAcc =(id)=>{
 
 }
 useEffect(()=>{
-  Axios.get("http://localhost:3001/getUser")
+  Axios.get("https://secure-v1.herokuapp.com/getUser")
   .then((res)=>{
   setList(res.data)})
 },[]);  
