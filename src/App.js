@@ -49,7 +49,7 @@ useEffect(()=>{
 
 const decrypt=async(val)=>{
   console.log(val.iv)
-  await axios.post("https://secure-v1.herokuapp.com/getPass",{password:val.password,iv:val.iv})
+  await Axios.post("https://secure-v1.herokuapp.com/getPass",{password:val.password,iv:val.iv})
   .then((res)=>{
     setList(listAcc.map((value)=>{
       return value._id==val._id?{_id:val._id,account:val.account,password:res.data,iv:val.iv}:value;
