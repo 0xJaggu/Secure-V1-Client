@@ -1,7 +1,6 @@
 import './App.css';
 import {useState,useEffect} from 'react';
 import Axios from "axios";
-import axios from 'axios';
 
 function App(){
 
@@ -11,7 +10,7 @@ const [listAcc,setList]=useState([])
 
 const addDetails=()=>
 {
-  Axios.post("http://localhost:3001/insert",{account:acc,password:pass})
+  Axios.post("https://secure-v1.herokuapp.com/insert",{account:acc,password:pass})
   .then((res)=>{
     setList([...listAcc,{_id:res.data._id,account:acc,password:res.data.password,iv:res.data.iv}])
   })
@@ -24,7 +23,7 @@ const addDetails=()=>
 const updatePass=(id)=>
 {
   const newPass=prompt("Enter the new password : ")
-  Axios.put("http://localhost:3001/update",{id:id,password:newPass})
+  Axios.put("https://secure-v1.herokuapp.com/update",{id:id,password:newPass})
   .then((res)=>{
     console.log(res)
     setList(listAcc.map((val)=>{
@@ -34,7 +33,7 @@ const updatePass=(id)=>
 }
 
 const deleteAcc =(id)=>{
-  Axios.delete(`http://localhost:3001/delete/${id}`)
+  Axios.delete(`https://secure-v1.herokuapp.com/delete/${id}`)
   .then((res)=>{
     setList(listAcc.filter((val)=>{
       return val._id!=id
@@ -43,14 +42,14 @@ const deleteAcc =(id)=>{
 
 }
 useEffect(()=>{
-  Axios.get("http://localhost:3001/getUser")
+  Axios.get("https://secure-v1.herokuapp.com/getUser")
   .then((res)=>{
   setList(res.data)})
 },[]);  
 
 const decrypt=async(val)=>{
   console.log(val.iv)
-  await axios.post("http://localhost:3001/getPass",{password:val.password,iv:val.iv})
+  await axios.post("https://secure-v1.herokuapp.com/getPass",{password:val.password,iv:val.iv})
   .then((res)=>{
     setList(listAcc.map((value)=>{
       return value._id==val._id?{_id:val._id,account:val.account,password:res.data,iv:val.iv}:value;
