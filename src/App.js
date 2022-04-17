@@ -1,34 +1,40 @@
-
 import './App.css';
 import {useState,useEffect} from 'react';
-import Axios from "axios"
+import Axios from "axios";
 import axios from 'axios';
-function App() {
+
+function App(){
 
 const [acc,setAcc]=useState("")
 const [pass,setPass]=useState("")
 const [listAcc,setList]=useState([])
 
-const addDetails=()=>{
-  Axios.post("https://secure-v1.herokuapp.com/insert",{account:acc,password:pass})
+const addDetails=()=>
+{
+  Axios.post("http://localhost:3001/insert",{account:acc,password:pass})
   .then((res)=>{
-    setList([...listAcc,{_id:res.data._id,account:acc,password:pass}])
+    setList([...listAcc,{_id:res.data._id,account:acc,password:res.data.password,iv:res.data.iv}])
+  })
+  .catch((err)=>{
+    console.log(err)
   })
 }
+
 
 const updatePass=(id)=>
 {
   const newPass=prompt("Enter the new password : ")
-  Axios.put("https://secure-v1.herokuapp.com/update",{id:id,password:newPass})
-  .then(()=>{
+  Axios.put("http://localhost:3001/update",{id:id,password:newPass})
+  .then((res)=>{
+    console.log(res)
     setList(listAcc.map((val)=>{
-      return val._id==id?{_id:id,account:val.account,password:newPass}:val;
+      return val._id==id?{_id:id,account:val.account,password:res.data.password,iv:res.data.iv}:val;
     }))
   })
 }
 
 const deleteAcc =(id)=>{
-  Axios.delete(`https://secure-v1.herokuapp.com/delete/${id}`)
+  Axios.delete(`http://localhost:3001/delete/${id}`)
   .then((res)=>{
     setList(listAcc.filter((val)=>{
       return val._id!=id
@@ -37,11 +43,21 @@ const deleteAcc =(id)=>{
 
 }
 useEffect(()=>{
-  Axios.get("https://secure-v1.herokuapp.com/getUser")
+  Axios.get("http://localhost:3001/getUser")
   .then((res)=>{
   setList(res.data)})
 },[]);  
 
+const decrypt=async(val)=>{
+  console.log(val.iv)
+  await axios.post("http://localhost:3001/getPass",{password:val.password,iv:val.iv})
+  .then((res)=>{
+    setList(listAcc.map((value)=>{
+      return value._id==val._id?{_id:val._id,account:val.account,password:res.data,iv:val.iv}:value;
+    }))
+
+  })
+}
 
   return (
     <div className="App">
@@ -54,7 +70,13 @@ useEffect(()=>{
        return <div classname="display">
          <br/>
          ACC : {val.account}<br/>
-         Password : {val.password}<br/>
+         <div onClick={()=>{
+           
+           decrypt(val)
+         }}>
+         Password : {val.password}
+         </div>
+         <br/>
          <button onClick={ () => {
             updatePass(val._id)
             }}>Update</button>
